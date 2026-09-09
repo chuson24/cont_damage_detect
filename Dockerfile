@@ -14,8 +14,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY webapp/requirements.txt webapp/requirements.txt
+# Plain PyPI (not download.pytorch.org's own index) — PyPI's default Linux
+# x86_64 torch wheel already bundles CUDA 12.1 via separate nvidia-*-cu12
+# packages, and download.pytorch.org measured ~53KB/s from this host vs
+# ~22MB/s from PyPI's CDN, so the special --index-url isn't worth the
+# multi-hour download it causes here.
 RUN pip3 install -r webapp/requirements.txt \
-    && pip3 install --index-url https://download.pytorch.org/whl/cu121 torch==2.4.1 torchvision==0.19.1 \
+    && pip3 install torch==2.4.1 torchvision==0.19.1 \
     && pip3 install ultralytics opencv-python-headless numpy
 
 COPY core/ core/

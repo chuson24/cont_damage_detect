@@ -20,6 +20,7 @@ jobs:
           port: ${{ secrets.AISERVER1_PORT }}
           username: ${{ secrets.AISERVER1_USER }}
           key: ${{ secrets.AISERVER1_SSH_KEY }}
+          command_timeout: 30m
           script: |
             set -euo pipefail
             APP_DIR="$HOME/cont_damage_detect"

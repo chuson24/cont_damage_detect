@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Container Damage Detection - Web</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<div id="app">
+
+  <div id="left-panel">
+    <canvas id="display" width="960" height="600"></canvas>
+    <div id="empty-hint">Chưa có ảnh/video</div>
+
+    <div id="playback-controls">
+      <label class="btn">
+        Mở ảnh...
+        <input type="file" id="input-image" accept="image/*" hidden>
+      </label>
+      <label class="btn">
+        Mở video...
+        <input type="file" id="input-video" accept="video/*" hidden>
+      </label>
+      <button id="btn-webcam">Mở Webcam</button>
+      <button id="btn-stop" disabled>Dừng</button>
+      <button id="btn-save" disabled>Lưu ảnh hiện tại...</button>
+      <button id="btn-record" disabled>● Ghi video kết quả</button>
+    </div>
+
+    <div id="status-label">Sẵn sàng</div>
+  </div>
+
+  <div id="right-panel">
+
+    <details open class="group">
+      <summary>Model (2 giai đoạn: Container -&gt; Damage)</summary>
+      <div class="group-body">
+        <label>Model Container:</label>
+        <select id="select-container-model"></select>
+        <label>Model Damage:</label>
+        <select id="select-damage-model"></select>
+        <button id="btn-reload-model">Nạp lại model</button>
+        <div id="model-info" class="info-text">Chưa nạp model</div>
+      </div>
+    </details>
+
+    <details open class="group">
+      <summary>Cấu hình phát hiện Container (giai đoạn 1)</summary>
+      <div class="group-body">
+        <label>Confidence: <span id="lbl-container-conf">0.25</span></label>
+        <input type="range" id="container-conf" min="0.01" max="1" step="0.01" value="0.25">
+        <label>IoU: <span id="lbl-container-iou">0.45</span></label>
+        <input type="range" id="container-iou" min="0.01" max="1" step="0.01" value="0.45">
+        <label>Image size:</label>
+        <input type="number" id="container-imgsz" min="160" max="1920" step="32" value="640">
+        <label>Padding crop (%): <span id="lbl-padding">8</span></label>
+        <input type="range" id="padding" min="0" max="50" step="1" value="8"
+               title="Nới rộng khung container thêm % trước khi crop, để không cắt mất hư hỏng nằm sát mép/góc container.">
+      </div>
+    </details>
+
+    <details open class="group">
+      <summary>Cấu hình phát hiện Damage (giai đoạn 2, chạy trên ảnh crop)</summary>
+      <div class="group-body">
+        <label>Confidence: <span id="lbl-damage-conf">0.25</span></label>
+        <input type="range" id="damage-conf" min="0.01" max="1" step="0.01" value="0.25">
+        <label>IoU: <span id="lbl-damage-iou">0.45</span></label>
+        <input type="range" id="damage-iou" min="0.01" max="1" step="0.01" value="0.45">
+        <label>Image size:</label>
+        <input type="number" id="damage-imgsz" min="160" max="1920" step="32" value="640">
+      </div>
+    </details>
+
+    <details open class="group">
+      <summary>Hiển thị &amp; Thiết bị</summary>
+      <div class="group-body">
+        <label>Thiết bị:</label>
+        <select id="select-device"></select>
+        <label><input type="checkbox" id="cb-container-box" checked> Vẽ khung container</label>
+        <label><input type="checkbox" id="cb-labels" checked> Hiện nhãn/label</label>
+        <label><input type="checkbox" id="cb-conf" checked> Hiện % confidence</label>
+      </div>
+    </details>
+
+    <details open class="group">
+      <summary>Cảnh báo hư hỏng (popup)</summary>
+      <div class="group-body">
+        <label><input type="checkbox" id="cb-popup" checked> Hiện popup khi phát hiện hư hỏng mới</label>
+        <label>Chờ trước khi cảnh báo lại (giây):</label>
+        <input type="number" id="cooldown" min="1" max="60" value="5">
+      </div>
+    </details>
+
+    <details open class="group">
+      <summary>Kết quả phát hiện</summary>
+      <div class="group-body">
+        <ul id="results-list"></ul>
+        <div id="fps-label">FPS: -</div>
+      </div>
+    </details>
+
+  </div>
+
+  <div id="popup-layer"></div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

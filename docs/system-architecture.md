@@ -240,3 +240,14 @@ for frame in frames:
 - **Runtime**: Exe auto-detects GPU at startup via `gpu_check.py`, falls back to CPU if needed
 
 See `docs/deployment-guide.md` for detailed build steps.
+
+## Web Client (`webapp/`)
+
+A FastAPI app under `webapp/` offers the same detection flows through a browser, reusing `core/` unchanged:
+
+- **Image**: `POST /api/detect_image` runs `pipeline.predict()` once and returns the annotated frame + detections.
+- **Video**: `POST /api/upload_video` stores the file, then `WS /ws/video/{video_id}` streams annotated frames. A background thread mirrors `VideoWorker`'s read+predict loop and pushes results onto a bounded `queue.Queue`; the async handler drains it and forwards to the socket, so a slow client naturally backpressures the reader instead of buffering the whole video in memory. Exactly one terminal message (`done`/`error`/`stopped`) is always enqueued via a `finally` block, so the consumer's blocking `queue.get()` can never hang.
+- **Webcam**: the *browser's* camera (via `getUserMedia`), not the server's — frames are captured client-side and pushed over `WS /ws/webcam`; the server runs one `predict()` per received frame and replies with the annotated frame.
+- **State**: one `ContainerDamagePipeline` + `DamageAlertTracker` per browser session (`webapp/session.py`), keyed by a client-generated `session_id`, so the (expensive) YOLO weights load once per tab, not per request.
+
+Recording downloads as `.webm` (`MediaRecorder` on `canvas.captureStream()`), a deliberate browser-imposed simplification versus the desktop's `.mp4`/`.avi`.

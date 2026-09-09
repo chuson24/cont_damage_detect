@@ -1,0 +1,156 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #f2f2f2;
+  color: #222;
+}
+
+#app {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  height: 100vh;
+}
+
+#left-panel {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+#display {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  background: #202020;
+  border: 1px solid #444;
+  object-fit: contain;
+}
+
+#empty-hint {
+  position: relative;
+  top: -50%;
+  text-align: center;
+  color: #aaa;
+  pointer-events: none;
+}
+
+#playback-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.btn, button {
+  padding: 6px 12px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  background: #e8e8e8;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#status-label {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #444;
+}
+
+#right-panel {
+  flex: 1;
+  min-width: 280px;
+  max-width: 380px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.group {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  padding: 6px 10px;
+}
+
+.group summary {
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.group-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 2px 2px;
+  font-size: 13px;
+}
+
+.group-body select,
+.group-body input[type="number"] {
+  width: 100%;
+  padding: 3px;
+}
+
+#results-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+#results-list li {
+  padding: 1px 0;
+}
+
+.info-text {
+  font-size: 12px;
+  color: #555;
+  white-space: pre-line;
+}
+
+#popup-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.damage-popup {
+  position: absolute;
+  pointer-events: auto;
+  width: 300px;
+  background: #fff;
+  border: 2px solid #d33;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  padding: 8px;
+  font-size: 13px;
+}
+
+.damage-popup img {
+  width: 100%;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.damage-popup .close-btn {
+  float: right;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 16px;
+  color: #888;
+}

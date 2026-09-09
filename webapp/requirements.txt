@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Reused from the desktop app's core/ pipeline — install these the same way
+# you would for gui/ (see main README.md):
+# torch
+# torchvision
+# ultralytics
+# opencv-python
+# numpy

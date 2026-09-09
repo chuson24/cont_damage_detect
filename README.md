@@ -46,6 +46,17 @@ python main.py
 
 **Note**: First run may take time downloading model weights and CUDA libraries.
 
+### Web UI (browser-based, mirrors the desktop GUI)
+
+A FastAPI + vanilla JS web app under `webapp/` offers the same functionality (image/video/webcam detection, live param tuning, damage alert popups) through a browser instead of PyQt6:
+
+```bash
+pip install -r webapp/requirements.txt   # fastapi/uvicorn, plus the core/ deps above
+uvicorn webapp.server:app --reload
+```
+
+Then open `http://127.0.0.1:8000`. Recording downloads as `.webm` (browser `MediaRecorder` limitation) instead of `.mp4`/`.avi`.
+
 ## Documentation
 
 - **[Project Overview & PDR](docs/project-overview-pdr.md)** – What this tool is, who it's for, scope, and requirements
@@ -68,6 +79,9 @@ cont_damage_detect/
 │   ├── main_window.py    # Main application window
 │   ├── video_worker.py   # Off-UI-thread inference
 │   └── damage_popup.py   # Alert popup dialog
+├── webapp/               # FastAPI + vanilla JS web UI (browser alternative to gui/)
+│   ├── server.py         # REST + WebSocket endpoints
+│   └── static/           # index.html / app.css / app.js
 ├── main.py              # Entry point
 ├── weights/             # YOLO model files (bundled in packaged app)
 ├── assets/              # Demo media

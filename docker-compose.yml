@@ -1,0 +1,17 @@
+services:
+  web:
+    build: .
+    image: cont-damage-detect-web:latest
+    container_name: cont-damage-detect-web
+    restart: unless-stopped
+    ports:
+      - "8010:8000"
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

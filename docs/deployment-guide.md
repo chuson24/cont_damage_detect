@@ -254,9 +254,19 @@ jobs:
           path: output/ContainerDamageDetection_Installer.exe
 ```
 
+## Web App Deployment (`webapp/`, GPU Docker + GitHub Actions)
+
+Unlike the desktop app above (manual PyInstaller/Inno Setup build), the web app under `webapp/` has a real, working CI/CD pipeline: `.github/workflows/deploy-aiserver1.yml` runs on every push to `main` (and on manual `workflow_dispatch`), SSHes into a GPU server, and redeploys.
+
+- **`Dockerfile`** (repo root) — `nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04` base + `torch==2.4.1`/`torchvision==0.19.1` (cu121 wheels, matching the pinned CPU pair used in local dev) + `ultralytics`/`opencv-python-headless`/`numpy` + `webapp/requirements.txt`. Bakes in `core/`, `webapp/`, and `weights/`.
+- **`docker-compose.yml`** (repo root) — single `web` service, host port `8010` → container `8000`, GPU reserved via `deploy.resources.reservations.devices` (works with plain `docker compose up`, no Swarm needed, on Compose v2.3+).
+- **Deploy flow**: the workflow (GitHub-hosted runner, no self-hosted runner needed) SSHes in using repo secrets `AISERVER1_HOST`/`AISERVER1_PORT`/`AISERVER1_USER`/`AISERVER1_SSH_KEY`, `git clone`/`pull`s the (public) repo directly on the server over HTTPS — no deploy key needed — then `docker compose build && docker compose up -d` and prunes dangling images.
+- **GPU sharing note**: the target server's GPU also runs another live production workload (a separate project's inference service) — this app deliberately shares that GPU rather than requiring a dedicated one; VRAM headroom was confirmed sufficient before enabling this.
+- **Public hostname**: exposed via an existing Cloudflare Tunnel (remotely-managed, token-based) already running on the target server for other services — add a new "Public Hostname" route in the Cloudflare Zero Trust dashboard (Networks → Tunnels → the running tunnel → Public Hostname tab) pointing to `http://localhost:8010`, rather than via a local `cloudflared config.yml`. This is a manual, one-time dashboard step (not automated by the workflow).
+
 ## Related Documentation
 
 - `docs/system-architecture.md` – GPU detection and device selection flow
-- `docs/project-roadmap.md` – CI/CD pipeline (future)
+- `docs/project-roadmap.md` – CI/CD pipeline (future, desktop installer only — see Web App Deployment above for the web app's actual pipeline)
 - `app.spec` – PyInstaller configuration (source)
 - `installer.iss` – Inno Setup configuration (source)

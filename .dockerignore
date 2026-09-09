@@ -1,0 +1,14 @@
+.git
+.venv
+.venv-web
+__pycache__
+*.pyc
+gui/
+main.py
+app.spec
+installer.iss
+plans/
+docs/
+assets/
+.vscode/
+*.md

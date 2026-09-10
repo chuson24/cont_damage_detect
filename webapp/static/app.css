@@ -67,6 +67,16 @@ button:disabled {
 
 #right-panel {
   display: none;
+  flex: 1;
+  min-width: 280px;
+  max-width: 380px;
+  overflow-y: auto;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#right-panel.visible {
+  display: flex;
 }
 
 .group {

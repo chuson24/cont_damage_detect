@@ -17,6 +17,8 @@
   const btnSave = $("btn-save");
   const btnRecord = $("btn-record");
   const btnWebcam = $("btn-webcam");
+  const btnToggleSidebar = $("btn-toggle-sidebar");
+  const rightPanel = $("right-panel");
 
   let hasModel = false;
   let mode = null; // null | 'image' | 'video' | 'webcam'
@@ -405,6 +407,7 @@
   btnWebcam.addEventListener("click", startWebcam);
   btnStop.addEventListener("click", stopStream);
   btnRecord.addEventListener("click", toggleRecording);
+  btnToggleSidebar.addEventListener("click", toggleSidebar);
 
   $("btn-reload-model").addEventListener("click", loadSelectedModel);
   $("select-container-model").addEventListener("change", loadSelectedModel);
@@ -426,8 +429,24 @@
     $(inputId).addEventListener("input", () => { $(labelId).textContent = $(inputId).value; });
   });
 
+  // ---------------------------------------------------------- sidebar toggle
+  const SIDEBAR_PREF_KEY = "cdd_sidebar_visible";
+
+  function setSidebarVisible(visible) {
+    rightPanel.classList.toggle("visible", visible);
+    try { localStorage.setItem(SIDEBAR_PREF_KEY, visible ? "1" : "0"); } catch (e) { /* ignore */ }
+  }
+
+  function toggleSidebar() {
+    setSidebarVisible(!rightPanel.classList.contains("visible"));
+  }
+
   // ------------------------------------------------------------- startup
   (async function init() {
+    let showSidebar = false;
+    try { showSidebar = localStorage.getItem(SIDEBAR_PREF_KEY) === "1"; } catch (e) { /* ignore */ }
+    setSidebarVisible(showSidebar);
+
     await Promise.all([populateModels(), populateDevices()]);
     await loadSelectedModel();
   })();
